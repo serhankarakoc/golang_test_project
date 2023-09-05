@@ -1,7 +1,7 @@
 package database
 
 import (
-	"zatrano/internal/app/models"
+	"starter/internal/app/models"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
