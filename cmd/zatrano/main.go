@@ -1,7 +1,7 @@
 package main
 
 import (
-	"zatrano/internal/server"
+	"starter/internal/server"
 )
 
 func main() {
