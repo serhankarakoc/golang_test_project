@@ -1,8 +1,8 @@
 package services
 
 import (
-	"zatrano/internal/app/models"
-	"zatrano/internal/app/repositories"
+	"starter/internal/app/models"
+	"starter/internal/app/repositories"
 )
 
 type AuthorService struct {
