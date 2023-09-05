@@ -3,8 +3,8 @@ package server
 import (
 	"log"
 
-	"zatrano/internal/app/routes"
-	"zatrano/internal/helpers"
+	"starter/internal/app/routes"
+	"starter/internal/helpers"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
