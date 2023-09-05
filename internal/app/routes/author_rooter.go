@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"zatrano/internal/app/handlers"
+	"starter/internal/app/handlers"
 
 	"github.com/gofiber/fiber/v2"
 )
