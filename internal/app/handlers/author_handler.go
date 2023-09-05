@@ -3,12 +3,12 @@ package handlers
 import (
 	"strconv"
 
-	"zatrano/internal/app/dtos"
-	"zatrano/internal/app/models"
-	"zatrano/internal/app/repositories"
-	"zatrano/internal/app/services"
-	"zatrano/internal/helpers"
-	"zatrano/internal/notifiers"
+	"starter/internal/app/dtos"
+	"starter/internal/app/models"
+	"starter/internal/app/repositories"
+	"starter/internal/app/services"
+	"starter/internal/helpers"
+	"starter/internal/notifiers"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
