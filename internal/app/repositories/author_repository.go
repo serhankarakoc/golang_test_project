@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"zatrano/internal/app/models"
-	"zatrano/internal/database"
+	"starter/internal/app/models"
+	"starter/internal/database"
 
 	"gorm.io/gorm"
 )
