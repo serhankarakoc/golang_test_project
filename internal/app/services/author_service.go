@@ -1,44 +1,122 @@
-package repositories
+package services
 
 import (
+	"starter/internal/app/dtos"
 	"starter/internal/app/models"
-	"starter/internal/database"
+	"starter/internal/app/repositories"
+	"starter/internal/helpers"
+	"starter/internal/notifiers"
 
-	"gorm.io/gorm"
+	"go.uber.org/zap"
 )
 
-type AuthorRepository struct {
-	db *gorm.DB
+type AuthorService struct {
+	repo *repositories.AuthorRepository
 }
 
-func NewAuthorRepository() *AuthorRepository {
-	return &AuthorRepository{db: database.SetupDatabase()}
+func NewAuthorService(repo *repositories.AuthorRepository) *AuthorService {
+	return &AuthorService{repo: repo}
 }
 
-func (r *AuthorRepository) GetAllAuthors() ([]*models.Author, error) {
-	var authors []*models.Author
-	if err := r.db.Find(&authors).Error; err != nil {
+func createAuthorDTOToModel(input dtos.CreateAuthorDTO) models.Author {
+	return models.Author{
+		Name:    input.Name,
+		Surname: input.Surname,
+	}
+}
+
+func updateAuthorDTOToModel(input dtos.UpdateAuthorDTO, author models.Author) models.Author {
+	author.Name = input.Name
+	author.Surname = input.Surname
+	return author
+}
+
+func (s *AuthorService) GetAllAuthors() ([]dtos.AuthorDTO, error) {
+	authors, err := s.repo.GetAllAuthors()
+
+	if err != nil {
 		return nil, err
 	}
-	return authors, nil
+
+	authorDTOs := make([]dtos.AuthorDTO, len(authors))
+	for i, author := range authors {
+		authorDTOs[i] = dtos.AuthorDTO{
+			ID:      author.ID,
+			Name:    author.Name,
+			Surname: author.Surname,
+		}
+	}
+
+	return authorDTOs, nil
 }
 
-func (r *AuthorRepository) GetAuthorByID(id uint) (*models.Author, error) {
-	var author models.Author
-	if err := r.db.First(&author, id).Error; err != nil {
+func (s *AuthorService) GetAuthorByID(authorID uint) (*dtos.AuthorDTO, error) {
+	author, err := s.repo.GetAuthorByID(authorID)
+	if err != nil {
 		return nil, err
 	}
-	return &author, nil
+
+	authorDTO := &dtos.AuthorDTO{
+		ID:      author.ID,
+		Name:    author.Name,
+		Surname: author.Surname,
+	}
+
+	return authorDTO, nil
 }
 
-func (r *AuthorRepository) CreateAuthor(author *models.Author) error {
-	return r.db.Create(author).Error
+func (s *AuthorService) CreateAuthor(input dtos.CreateAuthorDTO) (*dtos.AuthorDTO, error) {
+	author := createAuthorDTOToModel(input)
+	err := s.repo.CreateAuthor(&author)
+	if err != nil {
+		return nil, err
+	}
+
+	createdAuthor := dtos.AuthorDTO{
+		ID:      author.ID,
+		Name:    author.Name,
+		Surname: author.Surname,
+	}
+
+	es := notifiers.NotificationService{}
+	emailContent := map[string]string{"email": "example@example.com", "title": "Register", "content": "You have successfully registered."}
+	es.Send("email", emailContent)
+
+	logger := helpers.GetLogger()
+	logger.Info("Author created", zap.String("author_name", helpers.FullName(createdAuthor.Name, createdAuthor.Surname)))
+
+	return &createdAuthor, nil
 }
 
-func (r *AuthorRepository) UpdateAuthor(author *models.Author) error {
-	return r.db.Save(author).Error
+func (s *AuthorService) UpdateAuthor(authorID uint, input dtos.UpdateAuthorDTO) (*dtos.AuthorDTO, error) {
+	author, err := s.repo.GetAuthorByID(authorID)
+	if err != nil {
+		return nil, err
+	}
+
+	updatedAuthor := updateAuthorDTOToModel(input, *author)
+
+	err = s.repo.UpdateAuthor(&updatedAuthor)
+	if err != nil {
+		return nil, err
+	}
+
+	updatedAuthorDTO := dtos.AuthorDTO{
+		ID:      updatedAuthor.ID,
+		Name:    updatedAuthor.Name,
+		Surname: updatedAuthor.Surname,
+	}
+
+	es := notifiers.NotificationService{}
+	emailContent := map[string]string{"email": "example@example.com", "title": "Register", "content": "You have successfully updated."}
+	es.Send("email", emailContent)
+
+	logger := helpers.GetLogger()
+	logger.Info("Author updated", zap.String("author_name", helpers.FullName(updatedAuthorDTO.Name, updatedAuthorDTO.Surname)))
+
+	return &updatedAuthorDTO, nil
 }
 
-func (r *AuthorRepository) DeleteAuthor(id uint) error {
-	return r.db.Delete(&models.Author{}, id).Error
+func (s *AuthorService) DeleteAuthor(authorID uint) error {
+	return s.repo.DeleteAuthor(authorID)
 }
