@@ -15,29 +15,30 @@ func NewAuthorRepository() *AuthorRepository {
 	return &AuthorRepository{db: database.SetupDatabase()}
 }
 
-func (r *AuthorRepository) GetAll() ([]models.Author, error) {
-	var authors []models.Author
-	result := r.db.Find(&authors)
-	return authors, result.Error
+func (r *AuthorRepository) GetAllAuthors() ([]*models.Author, error) {
+	var authors []*models.Author
+	if err := r.db.Find(&authors).Error; err != nil {
+		return nil, err
+	}
+	return authors, nil
 }
 
-func (r *AuthorRepository) GetByID(id uint) (models.Author, error) {
+func (r *AuthorRepository) GetAuthorByID(id uint) (*models.Author, error) {
 	var author models.Author
-	result := r.db.First(&author, id)
-	return author, result.Error
+	if err := r.db.First(&author, id).Error; err != nil {
+		return nil, err
+	}
+	return &author, nil
 }
 
-func (r *AuthorRepository) Create(author models.Author) (models.Author, error) {
-	result := r.db.Create(&author)
-	return author, result.Error
+func (r *AuthorRepository) CreateAuthor(author *models.Author) error {
+	return r.db.Create(author).Error
 }
 
-func (r *AuthorRepository) Update(author models.Author) (models.Author, error) {
-	result := r.db.Save(&author)
-	return author, result.Error
+func (r *AuthorRepository) UpdateAuthor(author *models.Author) error {
+	return r.db.Save(author).Error
 }
 
-func (r *AuthorRepository) Delete(id uint) error {
-	result := r.db.Delete(&models.Author{}, id)
-	return result.Error
+func (r *AuthorRepository) DeleteAuthor(id uint) error {
+	return r.db.Delete(&models.Author{}, id).Error
 }
