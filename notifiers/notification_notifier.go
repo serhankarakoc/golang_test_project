@@ -6,5 +6,5 @@ type NotificationNotifier struct{}
 
 func (n NotificationNotifier) Send(content map[string]string) {
 	fmt.Printf("Sending Notification: %s - %s\n", content["title"], content["content"])
-	// Add general notification sending logic here
+	// Bildirim gönderim işlemi
 }
