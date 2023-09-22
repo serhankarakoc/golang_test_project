@@ -14,7 +14,7 @@ func InitLogger() {
 	config := zap.Config{
 		Encoding:    "json",
 		Level:       zap.NewAtomicLevelAt(zapcore.InfoLevel),
-		OutputPaths: []string{"./internal/logs/logs.log"},
+		OutputPaths: []string{"./logs/logs.log"},
 		EncoderConfig: zapcore.EncoderConfig{
 			MessageKey: "message",
 			LevelKey:   "level",
