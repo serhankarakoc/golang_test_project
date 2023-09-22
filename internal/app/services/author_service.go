@@ -5,7 +5,7 @@ import (
 	"starter/internal/app/dtos"
 	"starter/internal/app/models"
 	"starter/internal/app/repositories"
-	"starter/internal/notifiers"
+	"starter/notifiers"
 
 	"go.uber.org/zap"
 )
