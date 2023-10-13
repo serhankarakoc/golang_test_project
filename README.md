@@ -5,3 +5,4 @@ Rename **`rename.env`** -> **`.env`**
 go mod init starter  
 go mod tidy  
 go run cmd/starter/main.go
+http://127.0.0.1:3000/api/v1/authors
